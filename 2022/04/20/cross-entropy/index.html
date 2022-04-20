@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    
+    <title>信息熵 - 学习，分享，游戏，吐槽</title>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    
+    
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <meta name="description" content="要理解信息熵，我们需要先理解信息的本质。 信息的本质在于，当我们得知一个信息后，我们可以对未来尝试做出一些预测。如果一个信息的信息量越小，我们越容易做出预测，如果一个信息的信息量越大，我们越难做出预测。 打个比方，有这样一道题， 123请问1 + 1 &#x3D; ？ A.1 B.2 C.3 D.4  当看到题目的时候，我们很容易就知道答案是2，因为一加一这个信息所包含的信息量很小，我们很容易处理它，选出正">
+<meta property="og:type" content="article">
+<meta property="og:title" content="信息熵">
+<meta property="og:url" content="http://exampleasasdasdasdasd.com/2022/04/20/cross-entropy/index.html">
+<meta property="og:site_name" content="学习，分享，游戏，吐槽">
+<meta property="og:description" content="要理解信息熵，我们需要先理解信息的本质。 信息的本质在于，当我们得知一个信息后，我们可以对未来尝试做出一些预测。如果一个信息的信息量越小，我们越容易做出预测，如果一个信息的信息量越大，我们越难做出预测。 打个比方，有这样一道题， 123请问1 + 1 &#x3D; ？ A.1 B.2 C.3 D.4  当看到题目的时候，我们很容易就知道答案是2，因为一加一这个信息所包含的信息量很小，我们很容易处理它，选出正">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:/Users/17485/AppData/Roaming/Typora/typora-user-images/image-20220420162708057.png">
+<meta property="og:image" content="c:/Users/17485/AppData/Roaming/Typora/typora-user-images/image-20220420163742707.png">
+<meta property="og:image" content="c:/Users/17485/AppData/Roaming/Typora/typora-user-images/image-20220420172822242.png">
+<meta property="og:image" content="c:/Users/17485/AppData/Roaming/Typora/typora-user-images/image-20220420173126315.png">
+<meta property="article:published_time" content="2022-04-20T11:15:44.000Z">
+<meta property="article:modified_time" content="2022-04-20T11:19:30.115Z">
+<meta property="article:author" content="zj W">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/17485/AppData/Roaming/Typora/typora-user-images/image-20220420162708057.png">
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css"
+    />
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"
+    />
+    
+    <link rel="stylesheet" href="/lib/mdui_043tiny/css/mdui.css?v=1650453579765">
+    <link rel="stylesheet" href="/lib/iconfont/iconfont.css?v=1650453579765">
+    <link rel="stylesheet" href="/css/style.css?v=1650453579765">
+    
+        <link rel="stylesheet" href="/css/dark.css?v=1650453579765">
+     
+    
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body class="mdui-drawer-body-left">
+    
+    <div id="nexmoe-background">
+        <div class="nexmoe-bg" style="background-image: url(https://cdn.jsdelivr.net/gh/nexmoe/nexmoe.github.io@latest/images/cover/5c3aec85a4343.jpg)"></div>
+        <div class="mdui-appbar mdui-shadow-0">
+            <div class="mdui-toolbar">
+                <a mdui-drawer="{target: '#drawer', swipe: true}" title="menu" class="mdui-btn mdui-btn-icon mdui-ripple"><i class="mdui-icon nexmoefont icon-menu"></i></a>
+                <div class="mdui-toolbar-spacer"></div>
+                <!--<a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></a>-->
+                <a href="/" title="zj W" class="mdui-btn mdui-btn-icon"><img src="https://img0.baidu.com/it/u=3263612850,2346103312&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=400&amp;h=400" alt="zj W"></a>
+            </div>
+        </div>
+    </div>
+    <div id="nexmoe-header">
+        <div class="nexmoe-drawer mdui-drawer" id="drawer">
+    <div class="nexmoe-avatar mdui-ripple">
+        <a href="/" title="zj W">
+            <img src="https://img0.baidu.com/it/u=3263612850,2346103312&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=400&amp;h=400" alt="zj W" alt="zj W">
+        </a>
+    </div>
+    <div class="nexmoe-count">
+        <div><span>文章</span>2</div>
+        <div><span>标签</span>0</div>
+        <div><span>分类</span>0</div>
+    </div>
+    <div class="nexmoe-list mdui-list" mdui-collapse="{accordion: true}">
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/" title="回到首页">
+            <i class="mdui-list-item-icon nexmoefont icon-home"></i>
+            <div class="mdui-list-item-content">
+                回到首页
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/about.html" title="关于博客">
+            <i class="mdui-list-item-icon nexmoefont icon-info-circle"></i>
+            <div class="mdui-list-item-content">
+                关于博客
+            </div>
+        </a>
+        
+        <a class="nexmoe-list-item mdui-list-item mdui-ripple false" href="/PY.html" title="我的朋友">
+            <i class="mdui-list-item-icon nexmoefont icon-unorderedlist"></i>
+            <div class="mdui-list-item-content">
+                我的朋友
+            </div>
+        </a>
+        
+    </div>
+    <aside id="nexmoe-sidebar">
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-search">
+         
+            <form id="search_form" action_e="https://cn.bing.com/search?q=site:nexmoe.com" onsubmit="return search();">
+                <label><input id="search_value" name="q" type="search" placeholder="搜索"></label>
+            </form>
+         
+    </div>
+</div>
+    
+    <div class="nexmoe-widget-wrap">
+    <div class="nexmoe-widget nexmoe-social">
+        <a class="mdui-ripple" href="https://jq.qq.com/?_wv=1027&k=5CfKHun" target="_blank" mdui-tooltip="{content: 'QQ群'}" style="color: rgb(249, 174, 8);background-color: rgba(249, 174, 8, .1);">
+            <i class="nexmoefont icon-QQ"></i>
+        </a><a class="mdui-ripple" href="https://space.bilibili.com/20238211" target="_blank" mdui-tooltip="{content: '哔哩哔哩'}" style="color: rgb(231, 106, 141);background-color: rgba(231, 106, 141, .15);">
+            <i class="nexmoefont icon-bilibili"></i>
+        </a><a class="mdui-ripple" href="https://github.com/nexmoe/" target="_blank" mdui-tooltip="{content: 'GitHub'}" style="color: rgb(25, 23, 23);background-color: rgba(25, 23, 23, .15);">
+            <i class="nexmoefont icon-github"></i>
+        </a>
+    </div>
+</div>
+    
+    
+
+    
+    
+    
+</aside>
+    <div class="nexmoe-copyright">
+        &copy; 2022 zj W
+        Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        & <a href="https://github.com/theme-nexmoe/hexo-theme-nexmoe" target="_blank">Nexmoe</a>
+        
+    </div>
+</div><!-- .nexmoe-drawer -->
+    </div>
+    <div id="nexmoe-content">
+        <div class="nexmoe-primary">
+            <div class="nexmoe-post">
+
+  <article>
+      
+          <div class="nexmoe-post-cover" style="padding-bottom: NaN%;"> 
+              <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimagepphcloud.thepaper.cn%2Fpph%2Fimage%2F78%2F994%2F216.jpg&refer=http%3A%2F%2Fimagepphcloud.thepaper.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653045549&t=20a44c3ffe1add73023f88875afc6072" alt="信息熵" loading="lazy">
+              <h1>信息熵</h1>
+          </div>
+      
+      
+      <div class="nexmoe-post-meta nexmoe-rainbow" style="margin:10px 0!important;">
+    <a><i class="nexmoefont icon-calendar-fill"></i>2022年04月20日</a>
+</div>
+
+      <p>要理解信息熵，我们需要先理解信息的本质。</p>
+<p>信息的本质在于，当我们得知一个信息后，我们可以对未来尝试做出一些预测。如果一个信息的信息量越小，我们越容易做出预测，如果一个信息的信息量越大，我们越难做出预测。</p>
+<p>打个比方，有这样一道题，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">请问1 + 1 = ？ </span><br><span class="line"></span><br><span class="line">A.1 B.2 C.3 D.4</span><br></pre></td></tr></table></figure>
+
+<p>当看到题目的时候，我们很容易就知道答案是2，因为一加一这个信息所包含的信息量很小，我们很容易处理它，选出正确答案的概率几乎是百分之百。</p>
+<p>再来一个问题，</p>
+<p><img data-fancybox="gallery" src="C:\Users\17485\AppData\Roaming\Typora\typora-user-images\image-20220420162708057.png" alt="image-20220420162708057" data-caption="image-20220420162708057" loading="lazy"></p>
+<p>随便选了一道高数题，我们很难一眼看出答案，假设我不会这题，我只能开始猜题目，那么猜到每个选项的概率大约都是1&#x2F;4。</p>
+<p>由上面两个例子，我们可以发现，信息量和问题的确定性成反比，也就是说信息量和概率成反比。我们用一个反比例函数来描述信息量和概率之间的关系，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">信息量 X = -log（p）</span><br></pre></td></tr></table></figure>
+
+<img data-fancybox="gallery" src="C:\Users\17485\AppData\Roaming\Typora\typora-user-images\image-20220420163742707.png" alt="image-20220420163742707" data-caption="image-20220420163742707" loading="lazy">
+
+<p>由于-log（）这个函数的性质非常合适，所以我们用这个函数。</p>
+<p>对于某一个信息来说，我们这样定义他的熵（即复杂程度）。我们把他传达出的所有信息量求数学期望，你可以理解为平均信息量。于是我们得到信息熵的公式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">H = 求和p*x = -求和 p*log(p)</span><br></pre></td></tr></table></figure>
+
+<p>再回到上面的两个问题，第一个问题的信息熵是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">H1 = 0 + （-1*0） + 0 + 0 = 0</span><br></pre></td></tr></table></figure>
+
+<p>第二个问题的信息熵是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">H2 = (- 0.25 * log(0.25))*4 = 1.3863</span><br></pre></td></tr></table></figure>
+
+<p>显然第二个问题比第一个问题更复杂，所以他所携带的信息熵也更高。</p>
+<p>搞清楚了信息量和信息熵的概念以后，我们再回到1+1等于几这个问题，我们求得这个问题的信息熵刚好是0，真的有这么巧的事情吗？没有小数点，而是精确的0. 事实上，任何一个信息，如果它给出了一个我们已经明确知道的信息，他的信息熵必然是0。可以这样理解，这条信息没有给我们增加任何作用，无论看没看到这条信息，我都知道1加1等于2。</p>
+<p>由此我们可以引出交叉熵的概念了。</p>
+<p>每条信息都让我们能够以某种方式预测未来。那么从数学的角度，每条信息背后都蕴藏着一个概率分布。假设我们现在想求出这个概率分布情况。那么该怎么办呢？</p>
+<p>有这样一种做法。假设某条信息揭示的真实概率分布情况是p(x)，而我们预测的概率分布是q(x) 那么我只要让p和q尽可能一样就好。于是我们做了一个叫做交叉熵的东西，以表示真实的概率情况和预测的概率情况之间的差距。公式如下：</p>
+<p><img data-fancybox="gallery" src="C:\Users\17485\AppData\Roaming\Typora\typora-user-images\image-20220420172822242.png" alt="image-20220420172822242" data-caption="image-20220420172822242" loading="lazy"></p>
+<p><img data-fancybox="gallery" src="C:\Users\17485\AppData\Roaming\Typora\typora-user-images\image-20220420173126315.png" alt="image-20220420173126315" data-caption="image-20220420173126315" loading="lazy"></p>
+<p>比如这里，我们看到真实的概率分布情况是：百分百为篮球，不可能为足球，不可能为排球。接着我预测一些概率分布情况，我们发现交叉熵越小的时候，预测与真实更相近。那么我们只要找到一个概率分布，使得交叉熵最小，就能非常精确的近似真实的概率分布情况。实际意义上来说，我就可以实现对真实世界的预测。这就是交叉熵的含义。</p>
+<p>极端的情况，如果我们预测的概率分布情况和真实情况一模一样，也就是p 和 q完全相同，那么就和上面1加1等于2的例子一样，由于真实情况确定，信息熵H(p) &#x3D; 0, 则交叉熵H(p,q) &#x3D; 信息熵H(p) &#x3D; 0。</p>
+
+  </article>
+
+  
+      
+    <div class="nexmoe-post-copyright">
+        <strong>本文作者：</strong>zj W<br>
+        <strong>本文链接：</strong><a href="http://exampleasasdasdasdasd.com/2022/04/20/cross-entropy/" title="http:&#x2F;&#x2F;exampleasasdasdasdasd.com&#x2F;2022&#x2F;04&#x2F;20&#x2F;cross-entropy&#x2F;" target="_blank" rel="noopener">http:&#x2F;&#x2F;exampleasasdasdasdasd.com&#x2F;2022&#x2F;04&#x2F;20&#x2F;cross-entropy&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+
+  
+  
+  <div class="nexmoe-post-meta nexmoe-rainbow">
+    
+    
+</div>
+
+  
+      <div class="nexmoe-post-footer">
+          <section class="nexmoe-comment">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.css">
+<div id="gitalk"></div>
+<script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+        clientID: '80b2453b6d5f37ad6225',
+        clientSecret: '43e99fa852795c9a7b3eb924b2558c64b84bbdeb',
+        id: window.location.pathname,
+        repo: 'nexmoe.github.io',
+        owner: 'nexmoe',
+        admin: 'nexmoe'
+    })
+    gitalk.render('gitalk')
+</script>
+</section>
+      </div>
+  
+</div>
+            <div class="nexmoe-post-right">
+              <div class="nexmoe-fixed">
+                  <div class="nexmoe-tool"> 
+                    
+                      
+                    
+                      <a href="#nexmoe-content" class="toc-link" aria-label="回到顶部" title="top"><button class="mdui-fab mdui-ripple"><i class="nexmoefont icon-caret-top"></i></button></a>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
+     
+    <div id="nexmoe-search-space">
+        <div class="search-container">
+            <div class="search-header">
+                <div class="search-input-container">
+                    <input class="search-input" type="text" placeholder="搜索" oninput="sinput();">
+                </div>
+                <a class="search-close" onclick="sclose();">×</a>
+            </div>
+            <div class="search-body"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mdui@0.4.3/dist/js/mdui.min.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+ 
+
+<script async src="/js/app.js?v=1650453579768"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js"></script>
+<script>
+	$(".justified-gallery").justifiedGallery({
+		rowHeight: 160,
+		margins: 10,
+	});
+</script>
+
+
+    
+
+
+
+
+
+</body>
+
+</html>
